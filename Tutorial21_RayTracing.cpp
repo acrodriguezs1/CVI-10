@@ -429,8 +429,7 @@ void Tutorial21_RayTracing::CreateProceduralBLAS()
 {
     static_assert(sizeof(HLSL::BoxAttribs) % 16 == 0, "BoxAttribs must be aligned by 16 bytes");
 
-    const HLSL::BoxAttribs Boxes[] = { HLSL::BoxAttribs{-2.5f, -2.5f, -2.5f, 2.5f, 2.5f, 2.5f},
-                                      HLSL::BoxAttribs{-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f}};
+    const HLSL::BoxAttribs Boxes[] = {HLSL::BoxAttribs{-2.5f, -2.5f, -2.5f, 2.5f, 2.5f, 2.5f}, {HLSL::BoxAttribs{-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f}}};
 
     // Create box buffer
     {
@@ -509,7 +508,7 @@ void Tutorial21_RayTracing::UpdateTLAS()
 {
     // Create or update top-level acceleration structure
 
-    static constexpr int NumInstances = NumCubes + 3;
+    static constexpr int NumInstances = NumCubes + 17;
 
     bool NeedUpdate = true;
 
@@ -586,29 +585,122 @@ void Tutorial21_RayTracing::UpdateTLAS()
         Dst.Transform.SetRotation(float3x3::RotationY(angle).Data());
     };
 
-    Instances[0].InstanceName = "Ground Instance";
+    Instances[0].InstanceName = "Cube Instance 1";
     Instances[0].pBLAS        = m_pCubeBLAS;
     Instances[0].Mask         = OPAQUE_GEOM_MASK;
     Instances[0].Transform.SetRotation(float3x3::Scale(100.0f, 0.1f, 100.0f).Data());
     Instances[0].Transform.SetTranslation(0.0f, -6.0f, 0.0f);
 
+    Instances[1].InstanceName = "Cube Instance 2";
+    Instances[1].CustomId     = 0; // box index
+    Instances[1].pBLAS        = m_pProceduralBLAS;
+    Instances[1].Mask         = OPAQUE_GEOM_MASK;
+    Instances[1].Transform.SetTranslation(-2.75f, -3.0f, -12.f);
 
-    for (int i = 1; i < NumCubes; ++i)
-    {
-        Instances[i].InstanceName = "Cube Instance " + i;
-        Instances[i].CustomId     = i % 2; // Alternando entre 0 y 1 para el índice de la caja
-        Instances[i].pBLAS        = m_pProceduralBLAS;
-        Instances[i].Mask         = OPAQUE_GEOM_MASK;
-
-        // Puedes personalizar la lógica de traslación aquí para cada cubo
-        float xOffset = (i % 2 == 0) ? 2.75f : -2.75f;
-        float zOffset = i * 2.5f; // Ejemplo de separación en el eje Z
-
-        Instances[i].Transform.SetTranslation(xOffset, -5.0f, zOffset);
-    }
+    Instances[2].InstanceName = "Cube Instance 3";
+    Instances[2].CustomId     = 0; // box index
+    Instances[2].pBLAS        = m_pProceduralBLAS;
+    Instances[2].Mask         = OPAQUE_GEOM_MASK;
+    Instances[2].Transform.SetTranslation(-2.75f, -3.0f, 12.f);
 
 
- 
+    Instances[3].InstanceName = "Cube Instance 4";
+    Instances[3].CustomId     = 0; // box index
+    Instances[3].pBLAS        = m_pProceduralBLAS;
+    Instances[3].Mask         = OPAQUE_GEOM_MASK;
+    Instances[3].Transform.SetTranslation(-3.0f, -3.0f, 0.0f);
+
+    Instances[4].InstanceName = "Ground Instance";
+    Instances[4].CustomId     = 1; // box index
+    Instances[4].pBLAS        = m_pProceduralBLAS;
+    Instances[4].Mask         = OPAQUE_GEOM_MASK;
+    Instances[4].Transform.SetTranslation(1.0f, -5.0f, -5.0f);
+
+    Instances[5].InstanceName = "Sphere Instance";
+    Instances[5].CustomId     = 1; // box index
+    Instances[5].pBLAS        = m_pProceduralBLAS;
+    Instances[5].Mask         = OPAQUE_GEOM_MASK;
+    Instances[5].Transform.SetTranslation(-7.0f, -5.0f, -5.0f);
+
+    Instances[6].InstanceName = "Glass Instance";
+    Instances[6].CustomId     = 1; // box index
+    Instances[6].pBLAS        = m_pProceduralBLAS;
+    Instances[6].Mask         = OPAQUE_GEOM_MASK;
+    Instances[6].Transform.SetTranslation(3.0f, -5.0f, -5.0f);
+
+    Instances[7].InstanceName = "Sphere Instance 2";
+    Instances[7].CustomId     = 1; // box index
+    Instances[7].pBLAS        = m_pProceduralBLAS;
+    Instances[7].Mask         = OPAQUE_GEOM_MASK;
+    Instances[7].Transform.SetTranslation(-7.0f, -5.0f, 5.0f);
+
+    // Instancias
+    Instances[8].InstanceName = "Sphere Instance 8";
+    Instances[8].CustomId     = 1;
+    Instances[8].pBLAS        = m_pProceduralBLAS;
+    Instances[8].Transform.SetTranslation(1.6f, -3.0f,7.0f);
+
+    Instances[9].InstanceName = "Sphere Instance 9";
+    Instances[9].CustomId     = 1;
+    Instances[9].pBLAS        = m_pProceduralBLAS;
+    Instances[9].Transform.SetTranslation(2.2f, -3.0f, -7.0f);
+
+    Instances[10].InstanceName = "Sphere Instance 10";
+    Instances[10].CustomId     = 1;
+    Instances[10].pBLAS        = m_pProceduralBLAS;
+    Instances[10].Transform.SetTranslation(2.8f, -3.0f, -20.0f);
+
+    Instances[11].InstanceName = "Sphere Instance 11";
+    Instances[11].CustomId     = 1;
+    Instances[11].pBLAS        = m_pProceduralBLAS;
+    Instances[11].Transform.SetTranslation(-1.1f, -3.0f, -5.4f);
+
+    Instances[12].InstanceName = "Sphere Instance 12";
+    Instances[12].CustomId     = 1;
+    Instances[12].pBLAS        = m_pProceduralBLAS;
+    Instances[12].Transform.SetTranslation(-0.5f, -3.0f, 5.4f);
+
+    Instances[13].InstanceName = "Sphere Instance 13";
+    Instances[13].CustomId     = 1;
+    Instances[13].pBLAS        = m_pProceduralBLAS;
+    Instances[13].Transform.SetTranslation(0.1f, -3.0f, 15.4f);
+
+    Instances[14].InstanceName = "Sphere Instance 14";
+    Instances[14].CustomId     = 1;
+    Instances[14].pBLAS        = m_pProceduralBLAS;
+    Instances[14].Transform.SetTranslation(0.7f, -3.0f, -9.4f);
+
+    Instances[15].InstanceName = "Sphere Instance 15";
+    Instances[15].CustomId     = 1;
+    Instances[15].pBLAS        = m_pProceduralBLAS;
+    Instances[15].Transform.SetTranslation(1.3f, -3.0f, -8.4f);
+
+    Instances[16].InstanceName = "Sphere Instance 16";
+    Instances[16].CustomId     = 1;
+    Instances[16].pBLAS        = m_pProceduralBLAS;
+    Instances[16].Transform.SetTranslation(1.9f, -3.0f, -4.f);
+
+    Instances[17].InstanceName = "Sphere Instance 17";
+    Instances[17].CustomId     = 1;
+    Instances[17].pBLAS        = m_pProceduralBLAS;
+    Instances[17].Transform.SetTranslation(2.5f, -3.0f, 20.f);
+
+    Instances[18].InstanceName = "Sphere Instance 18";
+    Instances[18].CustomId     = 1;
+    Instances[18].pBLAS        = m_pProceduralBLAS;
+    Instances[18].Transform.SetTranslation(3.1f, -3.0f, -12.f);
+
+    Instances[19].InstanceName = "Sphere Instance 19";
+    Instances[19].CustomId     = 1;
+    Instances[19].pBLAS        = m_pProceduralBLAS;
+    Instances[19].Transform.SetTranslation(3.7f, -3.0f, -14.f);
+
+    Instances[20].InstanceName = "Sphere Instance 20";
+    Instances[20].CustomId     = 1;
+    Instances[20].pBLAS        = m_pProceduralBLAS;
+    Instances[20].Transform.SetTranslation(-1.1f, -3.0f, 14.f);
+
+
 
 
     // Build or update TLAS
@@ -659,13 +751,28 @@ void Tutorial21_RayTracing::CreateSBT()
 
     // Hit groups for primary ray
     // clang-format off
-    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Ground Instance", PRIMARY_RAY_INDEX, "GroundHit"       );
-      for (int i = 1; i < NumCubes-1; ++i)
-    {
-        m_pSBT->BindHitGroupForInstance(m_pTLAS, "Cube Instance "+ i, PRIMARY_RAY_INDEX, "SpherePrimaryHit"  );
-    }
-   
-
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Cube Instance 1", PRIMARY_RAY_INDEX, "GroundHit"  );
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Cube Instance 2", PRIMARY_RAY_INDEX, "SpherePrimaryHit"  );
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Cube Instance 3", PRIMARY_RAY_INDEX, "SpherePrimaryHit"  );
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Cube Instance 4", PRIMARY_RAY_INDEX, "SpherePrimaryHit"  );
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Ground Instance", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Glass Instance",  PRIMARY_RAY_INDEX, "SpherePrimaryHit" );
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 2", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+  
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 8", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 9", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 10", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 11", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 12", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 13", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 14", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 15", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 16", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 17", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 18", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 19", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
+    m_pSBT->BindHitGroupForInstance(m_pTLAS, "Sphere Instance 20", PRIMARY_RAY_INDEX, "SpherePrimaryHit");
 
     // clang-format on
 
@@ -884,8 +991,38 @@ void Tutorial21_RayTracing::UpdateUI()
     ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
     if (ImGui::Begin("Settings", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
+        ImGui::Checkbox("Animate", &m_Animate);
 
- 
+        ImGui::Text("Use WASD to move camera");
+        ImGui::SliderInt("Shadow blur", &m_Constants.ShadowPCF, 0, 16);
+        ImGui::SliderInt("Max recursion", &m_Constants.MaxRecursion, 0, m_MaxRecursionDepth);
+
+        for (int i = 0; i < NumCubes; ++i)
+        {
+            ImGui::Checkbox(("Cube " + std::to_string(i)).c_str(), &m_EnableCubes[i]);
+            if (i + 1 < NumCubes)
+                ImGui::SameLine();
+        }
+
+        ImGui::Separator();
+        ImGui::Text("Glass cube");
+        ImGui::Checkbox("Dispersion", &m_Constants.GlassEnableDispersion);
+
+        ImGui::SliderFloat("Index of refraction", &m_Constants.GlassIndexOfRefraction.x, 1.0f, MaxIndexOfRefraction);
+
+        if (m_Constants.GlassEnableDispersion)
+        {
+            ImGui::SliderFloat("Dispersion factor", &m_DispersionFactor, 0.0f, MaxDispersion);
+            m_Constants.GlassIndexOfRefraction.y = m_Constants.GlassIndexOfRefraction.x + m_DispersionFactor;
+
+            int rsamples = PlatformMisc::GetLSB(m_Constants.DispersionSampleCount);
+            ImGui::SliderInt("Dispersion samples", &rsamples, 1, PlatformMisc::GetLSB(Uint32{MAX_DISPERS_SAMPLES}), std::to_string(1 << rsamples).c_str());
+            m_Constants.DispersionSampleCount = 1u << rsamples;
+        }
+
+        ImGui::ColorEdit3("Reflection color", m_Constants.GlassReflectionColorMask.Data(), ImGuiColorEditFlags_NoAlpha);
+        ImGui::ColorEdit3("Material color", m_Constants.GlassMaterialColor.Data(), ImGuiColorEditFlags_NoAlpha);
+        ImGui::SliderFloat("Absorption", &m_Constants.GlassAbsorption, 0.0f, 2.0f);
 
         ImGui::Separator();
         ImGui::Text("Sphere");
